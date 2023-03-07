@@ -57,7 +57,7 @@ using Acc3D = Acc<Dim3D>;
 // CPU serial backend
 using Device = alpaka::DevCpu;
 using Platform = alpaka::Pltf<Device>;
-using Queue = alpaka::Queue<Device, alpaka::NonBlocking>;
+using Queue = alpaka::Queue<Device, alpaka::Blocking>;
 using Event = alpaka::Event<Queue>;
 
 template <typename TDim>
