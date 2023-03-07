@@ -1,2 +1,4 @@
 00_enumerate_cpu
 00_enumerate_cuda
+01_blocking_queue_cpu
+02_nonblocking_queue_cpu
