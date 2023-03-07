@@ -20,7 +20,7 @@ int main() {
   std::cout << "  - " << alpaka::getName(host) << '\n';
   std::cout << std::endl;
 
-  // create a blocking host queue and submit some work to it
+  // create a non-blocking host queue and submit some work to it
   alpaka::Queue<Host, alpaka::NonBlocking> queue{host};
 
   std::cout << "Enqueue some work\n";
