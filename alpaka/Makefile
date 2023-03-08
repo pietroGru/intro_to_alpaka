@@ -1,6 +1,6 @@
 .PHONY: all clean
 
-TARGETS := 00_enumerate_cpu 00_enumerate_cuda 01_blocking_queue_cpu 02_nonblocking_queue_cpu
+TARGETS := 00_enumerate_cpu 00_enumerate_cuda 01_blocking_queue_cpu 02_nonblocking_queue_cpu 03_memory_cpu 03_memory_cuda
 
 all: $(TARGETS)
 
