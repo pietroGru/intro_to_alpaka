@@ -85,10 +85,10 @@ void testVectorAddKernel(Host host, Device device) {
   alpaka::memcpy(queue, in2_d, in2_h);
 
   // fill the output buffer with zeros; the size is known from the buffer objects
-  alpaka::memset(queue, out_d, 0.);
+  alpaka::memset(queue, out_d, 0x00);
 
   // launch the 1-dimensional kernel with scalar size
-  auto div = make_workdiv<Acc1D>(4, 4);
+  auto div = make_workdiv<Acc1D>(32, 32);
   alpaka::exec<Acc1D>(
       queue, div, VectorAddKernel{}, in1_d.data(), in2_d.data(), out_d.data(), size);
 
@@ -106,7 +106,7 @@ void testVectorAddKernel(Host host, Device device) {
   }
 
   // reset the output buffer on the device to all zeros
-  alpaka::memset(queue, out_d, 0.);
+  alpaka::memset(queue, out_d, 0x00);
 
   // launch the 1-dimensional kernel with vector size
   alpaka::exec<Acc1D>(
@@ -164,7 +164,7 @@ void testVectorAddKernel3D(Host host, Device device) {
   alpaka::memcpy(queue, in2_d, in2_h);
 
   // fill the output buffer with zeros; the size is known from the buffer objects
-  alpaka::memset(queue, out_d, 0.);
+  alpaka::memset(queue, out_d, 0x00);
 
   // launch the 3-dimensional kernel
   auto div = make_workdiv<Acc3D>({5, 5, 1}, {4, 4, 4});
