@@ -29,7 +29,7 @@ int main() {
 
   std::cout << "Accelerator platform: " << alpaka::core::demangled<Platform> << '\n';
   std::cout << "Found " << devices.size() << " device(s):\n";
-  for (auto const& device: devices)
+  for (auto const& device : devices)
     std::cout << "  - " << alpaka::getName(device) << '\n';
   std::cout << std::endl;
 }

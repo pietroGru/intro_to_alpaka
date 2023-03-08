@@ -25,9 +25,9 @@ int main() {
 
   std::cout << "Enqueue some work\n";
   alpaka::enqueue(queue, []() noexcept {
-      std::cout << "  - host task running...\n";
-      std::this_thread::sleep_for(std::chrono::seconds(5u));
-      std::cout << "  - host task complete\n";
+    std::cout << "  - host task running...\n";
+    std::this_thread::sleep_for(std::chrono::seconds(5u));
+    std::cout << "  - host task complete\n";
   });
 
   // wait for the work to complete
