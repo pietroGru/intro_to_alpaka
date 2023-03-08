@@ -89,6 +89,10 @@ void testVectorAddKernel(Host host, Device device) {
 
   // launch the 1-dimensional kernel with scalar size
   auto div = make_workdiv<Acc1D>(32, 32);
+  std::cout << "Testing VectorAddKernel with scalar indices with a grid of "
+            << alpaka::getWorkDiv<alpaka::Grid, alpaka::Blocks>(div) << " blocks x "
+            << alpaka::getWorkDiv<alpaka::Block, alpaka::Threads>(div) << " threads x "
+            << alpaka::getWorkDiv<alpaka::Thread, alpaka::Elems>(div) << " elements...\n";
   alpaka::exec<Acc1D>(
       queue, div, VectorAddKernel{}, in1_d.data(), in2_d.data(), out_d.data(), size);
 
@@ -104,11 +108,16 @@ void testVectorAddKernel(Host host, Device device) {
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
   }
+  std::cout << "success\n";
 
   // reset the output buffer on the device to all zeros
   alpaka::memset(queue, out_d, 0x00);
 
   // launch the 1-dimensional kernel with vector size
+  std::cout << "Testing VectorAddKernel1D with vector indices with a grid of "
+            << alpaka::getWorkDiv<alpaka::Grid, alpaka::Blocks>(div) << " blocks x "
+            << alpaka::getWorkDiv<alpaka::Block, alpaka::Threads>(div) << " threads x "
+            << alpaka::getWorkDiv<alpaka::Thread, alpaka::Elems>(div) << " elements...\n";
   alpaka::exec<Acc1D>(
       queue, div, VectorAddKernel1D{}, in1_d.data(), in2_d.data(), out_d.data(), size);
 
@@ -124,6 +133,7 @@ void testVectorAddKernel(Host host, Device device) {
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
   }
+  std::cout << "success\n";
 }
 
 void testVectorAddKernel3D(Host host, Device device) {
@@ -168,6 +178,10 @@ void testVectorAddKernel3D(Host host, Device device) {
 
   // launch the 3-dimensional kernel
   auto div = make_workdiv<Acc3D>({5, 5, 1}, {4, 4, 4});
+  std::cout << "Testing VectorAddKernel3D with vector indices with a grid of "
+            << alpaka::getWorkDiv<alpaka::Grid, alpaka::Blocks>(div) << " blocks x "
+            << alpaka::getWorkDiv<alpaka::Block, alpaka::Threads>(div) << " threads x "
+            << alpaka::getWorkDiv<alpaka::Thread, alpaka::Elems>(div) << " elements...\n";
   alpaka::exec<Acc3D>(
       queue, div, VectorAddKernel3D{}, in1_d.data(), in2_d.data(), out_d.data(), ndsize);
 
@@ -183,6 +197,7 @@ void testVectorAddKernel3D(Host host, Device device) {
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
   }
+  std::cout << "success\n";
 }
 
 int main() {
