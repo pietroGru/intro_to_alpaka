@@ -7,18 +7,20 @@ all: $(TARGETS)
 clean:
 	rm -f $(TARGETS)
 
+CUDA_BASE   ?= /usr/local/cuda
 BOOST_BASE  ?= /afs/hep.wisc.edu/home/abocci/public/boost
 ALPAKA_BASE ?= /afs/hep.wisc.edu/home/abocci/public/alpaka
 
-00_enumerate_cpu: 00_enumerate.cc
-	g++ -std=c++17 -O2 -g -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include -pthread $< -o $@
+CXX  := g++
+NVCC := $(CUDA_BASE)/bin/nvcc
 
-00_enumerate_cuda: 00_enumerate.cc
-	nvcc -x cu -std=c++17 -O2 -g --expt-relaxed-constexpr -DALPAKA_ACC_GPU_CUDA_ENABLED -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include -Xcompiler -pthread $< -o $@
+CXXFLAGS       := -std=c++17 -O2 -g -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include
+CXX_HOST_FLAGS := -pthread
+CXX_CUDA_FLAGS := --expt-relaxed-constexpr
 
-01_blocking_queue_cpu: 01_blocking_queue.cc
-	g++ -std=c++17 -O2 -g -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include -pthread $< -o $@
+%_cpu: %.cc
+	$(CXX) $(CXXFLAGS) $(CXX_HOST_FLAGS) -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED $< -o $@
 
-02_nonblocking_queue_cpu: 02_nonblocking_queue.cc
-	g++ -std=c++17 -O2 -g -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include -pthread $< -o $@
+%_cuda: %.cc
+	$(NVCC) -x cu -ccbin $(CXX) $(CXXFLAGS) $(CXX_CUDA_FLAGS) -Xcompiler '$(CXX_HOST_FLAGS)' -DALPAKA_ACC_GPU_CUDA_ENABLED $< -o $@
 
