@@ -19,13 +19,8 @@ int main() {
   std::cout << "  - " << alpaka::getName(host) << '\n';
   std::cout << std::endl;
 
-  // enumerate the devices on the accelerator platform
-  std::vector<Device> devices;
-  std::size_t n = alpaka::getDevCount<Platform>();
-  devices.reserve(n);
-  for (std::size_t i = 0; i < n; ++i) {
-    devices.push_back(alpaka::getDevByIdx<Platform>(i));
-  }
+  // get all the devices on the accelerator platform
+  std::vector<Device> devices = alpaka::getDevs<Platform>();
 
   std::cout << "Accelerator platform: " << alpaka::core::demangled<Platform> << '\n';
   std::cout << "Found " << devices.size() << " device(s):\n";
