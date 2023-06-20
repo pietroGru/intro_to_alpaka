@@ -1,6 +1,6 @@
 /*
- * g++ -std=c++17 -O2 -g -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -I$BOOST_BASE/include -I$ALPAKA_BASE/include 01_blocking_queue.cc -o 01_blocking_queue_cpu
- * nvcc -x cu -std=c++17 -O2 -g --expt-relaxed-constexpr -DALPAKA_ACC_GPU_CUDA_ENABLED -I$BOOST_BASE/include -I$ALPAKA_BASE/include 01_blocking_queue.cc -o 01_blocking_queue_cuda
+ * g++ -std=c++17 -O2 -g -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED -I$BOOST_BASE/include -I$ALPAKA_BASE/include -pthread 01_blocking_queue.cc -o 01_blocking_queue_cpu
+ * nvcc -x cu -std=c++17 -O2 -g --expt-relaxed-constexpr -DALPAKA_ACC_GPU_CUDA_ENABLED -I$BOOST_BASE/include -I$ALPAKA_BASE/include -Xcompiler '-pthread' 01_blocking_queue.cc -o 01_blocking_queue_cuda
  */
 
 #include <chrono>
