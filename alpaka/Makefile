@@ -7,9 +7,17 @@ all: $(TARGETS)
 clean:
 	rm -f $(TARGETS)
 
+# NVIDIA CUDA
 CUDA_BASE   ?= /usr/local/cuda
-BOOST_BASE  ?= /afs/hep.wisc.edu/home/abocci/public/boost
-ALPAKA_BASE ?= /afs/hep.wisc.edu/home/abocci/public/alpaka
+
+# Boost C++ library
+BOOST_BASE  ?= /usr
+
+# Intel TBB library
+TBB_BASE    ?= /usr
+
+# Alpaka library
+ALPAKA_BASE ?= /home/fwyzard/src/alpaka-group/alpaka
 
 CXX  := g++
 NVCC := $(CUDA_BASE)/bin/nvcc
@@ -20,6 +28,12 @@ CXX_CUDA_FLAGS := --expt-relaxed-constexpr
 
 %_cpu: %.cc
 	$(CXX) $(CXXFLAGS) $(CXX_HOST_FLAGS) -DALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED $< -o $@
+
+%_mt: %.cc
+	$(CXX) $(CXXFLAGS) $(CXX_HOST_FLAGS) -DALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED $< -o $@
+
+%_tbb: %.cc
+	$(CXX) $(CXXFLAGS) $(CXX_HOST_FLAGS) -I$(TBB_BASE)/include -DALPAKA_ACC_CPU_B_TBB_T_SEQ_ENABLED $< -L$(TBB_BASE)/lib -ltbb -o $@
 
 %_cuda: %.cc
 	$(NVCC) -x cu -ccbin $(CXX) $(CXXFLAGS) $(CXX_CUDA_FLAGS) -Xcompiler '$(CXX_HOST_FLAGS)' -DALPAKA_ACC_GPU_CUDA_ENABLED $< -o $@

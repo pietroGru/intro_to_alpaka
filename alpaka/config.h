@@ -33,7 +33,7 @@ using Dim1D = alpaka::DimInt<1u>;
 using Dim2D = alpaka::DimInt<2u>;
 using Dim3D = alpaka::DimInt<3u>;
 
-// vectors 
+// vectors
 template <typename TDim>
 using Vec = alpaka::Vec<TDim, uint32_t>;
 using Scalar = Vec<Dim0D>;
@@ -55,48 +55,57 @@ using HostPlatform = alpaka::PltfCpu;
 // different backends and device types
 
 #if defined(ALPAKA_ACC_GPU_CUDA_ENABLED)
-// CUDA backend
+// NVIDIA CUDA backend
 using Device = alpaka::DevCudaRt;
-using Platform = alpaka::Pltf<Device>;
 using Queue = alpaka::Queue<Device, alpaka::NonBlocking>;
-using Event = alpaka::Event<Queue>;
 
 template <typename TDim>
 using Acc = alpaka::AccGpuCudaRt<TDim, uint32_t>;
-using Acc1D = Acc<Dim1D>;
-using Acc2D = Acc<Dim2D>;
-using Acc3D = Acc<Dim3D>;
 
 #elif defined(ALPAKA_ACC_GPU_HIP_ENABLED)
-// HIP/ROCm backend
+// AMD HIP/ROCm backend
 using Device = alpaka::DevHipRt;
-using Platform = alpaka::Pltf<Device>;
 using Queue = alpaka::Queue<Device, alpaka::NonBlocking>;
-using Event = alpaka::Event<Queue>;
 
 template <typename TDim>
 using Acc = alpaka::AccGpuHipRt<TDim, uint32_t>;
-using Acc1D = Acc<Dim1D>;
-using Acc2D = Acc<Dim2D>;
-using Acc3D = Acc<Dim3D>;
 
 #elif defined(ALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED)
 // CPU serial backend
 using Device = alpaka::DevCpu;
-using Platform = alpaka::Pltf<Device>;
 using Queue = alpaka::Queue<Device, alpaka::Blocking>;
-using Event = alpaka::Event<Queue>;
 
 template <typename TDim>
 using Acc = alpaka::AccCpuSerial<TDim, uint32_t>;
-using Acc1D = Acc<Dim1D>;
-using Acc2D = Acc<Dim2D>;
-using Acc3D = Acc<Dim3D>;
+
+#elif defined(ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED)
+// CPU parallel backend using one CPU thread per device thread
+using Device = alpaka::DevCpu;
+using Queue = alpaka::Queue<Device, alpaka::Blocking>;
+
+template <typename TDim>
+using Acc = alpaka::AccCpuThreads<TDim, uint32_t>;
+
+#elif defined(ALPAKA_ACC_CPU_B_TBB_T_SEQ_ENABLED)
+// CPU parallel backend using one TBB task per block
+using Device = alpaka::DevCpu;
+using Queue = alpaka::Queue<Device, alpaka::Blocking>;
+
+template <typename TDim>
+using Acc = alpaka::AccCpuTbbBlocks<TDim, uint32_t>;
 
 #else
 // no backend specified
-#error Please define one of ALPAKA_ACC_GPU_CUDA_ENABLED, ALPAKA_ACC_GPU_HIP_ENABLED, ALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED
+#error Please define a single one of ALPAKA_ACC_GPU_CUDA_ENABLED, ALPAKA_ACC_GPU_HIP_ENABLED, ALPAKA_ACC_CPU_B_SEQ_T_SEQ_ENABLED, ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED, ALPAKA_ACC_CPU_B_TBB_T_SEQ_ENABLED
 
 #endif
+
+// common definitions
+using Platform = alpaka::Pltf<Device>;
+using Event = alpaka::Event<Queue>;
+
+using Acc1D = Acc<Dim1D>;
+using Acc2D = Acc<Dim2D>;
+using Acc3D = Acc<Dim3D>;
 
 #endif  // config_h
