@@ -13,7 +13,8 @@
 
 int main() {
   // the host abstraction always has a single device
-  Host host = alpaka::getDevByIdx<HostPlatform>(0u);
+  HostPlatform host_platform;
+  Host host = alpaka::getDevByIdx(host_platform, 0u);
 
   std::cout << "Host platform: " << alpaka::core::demangled<HostPlatform> << '\n';
   std::cout << "Found 1 device:\n";

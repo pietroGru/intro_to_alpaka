@@ -12,14 +12,18 @@
 #include "config.h"
 
 int main() {
+  // initialise the accelerator platform
+  Platform platform;
+
   // require at least one device
-  std::size_t n = alpaka::getDevCount<Platform>();
+  std::size_t n = alpaka::getDevCount(platform);
   if (n == 0) {
     exit(EXIT_FAILURE);
   }
 
   // use the single host device
-  Host host = alpaka::getDevByIdx<HostPlatform>(0u);
+  HostPlatform host_platform;
+  Host host = alpaka::getDevByIdx(host_platform, 0u);
   std::cout << "Host:   " << alpaka::getName(host) << '\n';
 
   // allocate a buffer of floats in host memory, mapped to be efficiently copied to/from the device
@@ -33,7 +37,7 @@ int main() {
   }
 
   // use the first device
-  Device device = alpaka::getDevByIdx<Platform>(0u);
+  Device device = alpaka::getDevByIdx(platform, 0u);
   std::cout << "Device: " << alpaka::getName(device) << '\n';
 
   // create a work queue

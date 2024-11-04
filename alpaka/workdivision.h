@@ -29,10 +29,14 @@
 #include "config.h"
 
 // If the first argument is not a multiple of the second argument, round it up to the next multiple
-inline constexpr Idx round_up_by(Idx value, Idx divisor) { return (value + divisor - 1) / divisor * divisor; }
+inline constexpr Idx round_up_by(Idx value, Idx divisor) {
+  return (value + divisor - 1) / divisor * divisor;
+}
 
 // Return the integer division of the first argument by the second argument, rounded up to the next integer
-inline constexpr Idx divide_up_by(Idx value, Idx divisor) { return (value + divisor - 1) / divisor; }
+inline constexpr Idx divide_up_by(Idx value, Idx divisor) {
+  return (value + divisor - 1) / divisor;
+}
 
 // Trait describing whether or not the accelerator expects the threads-per-block and elements-per-thread to be swapped
 template <typename TAcc, typename = std::enable_if_t<alpaka::isAccelerator<TAcc>>>
@@ -40,25 +44,31 @@ struct requires_single_thread_per_block : public std::true_type {};
 
 #ifdef ALPAKA_ACC_GPU_CUDA_ENABLED
 template <typename TDim>
-struct requires_single_thread_per_block<alpaka::AccGpuCudaRt<TDim, Idx>> : public std::false_type {};
+struct requires_single_thread_per_block<alpaka::AccGpuCudaRt<TDim, Idx>>
+    : public std::false_type {};
 #endif  // ALPAKA_ACC_GPU_CUDA_ENABLED
 
 #ifdef ALPAKA_ACC_GPU_HIP_ENABLED
 template <typename TDim>
-struct requires_single_thread_per_block<alpaka::AccGpuHipRt<TDim, Idx>> : public std::false_type {};
+struct requires_single_thread_per_block<alpaka::AccGpuHipRt<TDim, Idx>>
+    : public std::false_type {};
 #endif  // ALPAKA_ACC_GPU_HIP_ENABLED
 
 #ifdef ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED
 template <typename TDim>
-struct requires_single_thread_per_block<alpaka::AccCpuThreads<TDim, Idx>> : public std::false_type {};
+struct requires_single_thread_per_block<alpaka::AccCpuThreads<TDim, Idx>>
+    : public std::false_type {};
 #endif  // ALPAKA_ACC_CPU_B_SEQ_T_THREADS_ENABLED
 
 // Whether or not the accelerator expects the threads-per-block and elements-per-thread to be swapped
 template <typename TAcc, typename = std::enable_if_t<alpaka::isAccelerator<TAcc>>>
-inline constexpr bool requires_single_thread_per_block_v = requires_single_thread_per_block<TAcc>::value;
+inline constexpr bool requires_single_thread_per_block_v =
+    requires_single_thread_per_block<TAcc>::value;
 
 // Create an accelerator-dependent work division for 1-dimensional kernels
-template <typename TAcc, typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and alpaka::Dim<TAcc>::value == 1>>
+template <typename TAcc,
+          typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and
+                                      alpaka::Dim<TAcc>::value == 1>>
 inline WorkDiv<Dim1D> make_workdiv(Idx blocks, Idx elements) {
   if constexpr (not requires_single_thread_per_block_v<TAcc>) {
     // On GPU backends, each thread is looking at a single element:
@@ -91,7 +101,9 @@ inline WorkDiv<alpaka::Dim<TAcc>> make_workdiv(const Vec<alpaka::Dim<TAcc>>& blo
   }
 }
 
-template <typename TAcc, typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and alpaka::Dim<TAcc>::value == 1>>
+template <typename TAcc,
+          typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and
+                                      alpaka::Dim<TAcc>::value == 1>>
 class elements_with_stride {
 public:
   ALPAKA_FN_ACC inline elements_with_stride(TAcc const& acc)
@@ -154,7 +166,9 @@ public:
       return (index_ == other.index_) and (first_ == other.first_);
     }
 
-    ALPAKA_FN_ACC inline bool operator!=(iterator const& other) const { return not(*this == other); }
+    ALPAKA_FN_ACC inline bool operator!=(iterator const& other) const {
+      return not(*this == other);
+    }
 
   private:
     // non-const to support iterator copy and assignment
@@ -167,9 +181,13 @@ public:
     Idx range_;
   };
 
-  ALPAKA_FN_ACC inline iterator begin() const { return iterator(elements_, stride_, extent_, thread_); }
+  ALPAKA_FN_ACC inline iterator begin() const {
+    return iterator(elements_, stride_, extent_, thread_);
+  }
 
-  ALPAKA_FN_ACC inline iterator end() const { return iterator(elements_, stride_, extent_, extent_); }
+  ALPAKA_FN_ACC inline iterator end() const {
+    return iterator(elements_, stride_, extent_, extent_);
+  }
 
 private:
   const Idx elements_;
@@ -178,7 +196,9 @@ private:
   const Idx extent_;
 };
 
-template <typename TAcc, typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and (alpaka::Dim<TAcc>::value > 0)>>
+template <typename TAcc,
+          typename = std::enable_if_t<alpaka::isAccelerator<TAcc> and
+                                      (alpaka::Dim<TAcc>::value > 0)>>
 class elements_with_stride_nd {
 public:
   using Dim = alpaka::Dim<TAcc>;
@@ -218,9 +238,13 @@ public:
       return old;
     }
 
-    ALPAKA_FN_ACC constexpr inline bool operator==(iterator const& other) const { return (index_ == other.index_); }
+    ALPAKA_FN_ACC constexpr inline bool operator==(iterator const& other) const {
+      return (index_ == other.index_);
+    }
 
-    ALPAKA_FN_ACC constexpr inline bool operator!=(iterator const& other) const { return not(*this == other); }
+    ALPAKA_FN_ACC constexpr inline bool operator!=(iterator const& other) const {
+      return not(*this == other);
+    }
 
   private:
     // construct an iterator pointing to the first element to be processed by the current thread
@@ -232,7 +256,10 @@ public:
 
     // construct an end iterator, pointing post the end of the extent
     ALPAKA_FN_ACC inline iterator(elements_with_stride_nd const* loop, at_end_t const&)
-        : loop_{loop}, first_{loop_->extent_}, range_{loop_->extent_}, index_{loop_->extent_} {}
+        : loop_{loop},
+          first_{loop_->extent_},
+          range_{loop_->extent_},
+          index_{loop_->extent_} {}
 
     template <size_t I>
     ALPAKA_FN_ACC inline constexpr bool nth_elements_loop() {

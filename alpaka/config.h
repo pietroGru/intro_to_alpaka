@@ -50,7 +50,7 @@ using WorkDiv3D = WorkDiv<Dim3D>;
 
 // host types
 using Host = alpaka::DevCpu;
-using HostPlatform = alpaka::PltfCpu;
+using HostPlatform = alpaka::PlatformCpu;
 
 // different backends and device types
 
@@ -101,7 +101,7 @@ using Acc = alpaka::AccCpuTbbBlocks<TDim, uint32_t>;
 #endif
 
 // common definitions
-using Platform = alpaka::Pltf<Device>;
+using Platform = alpaka::Platform<Device>;
 using Event = alpaka::Event<Queue>;
 
 using Acc1D = Acc<Dim1D>;

@@ -48,22 +48,22 @@ struct VectorAddKernel3D {
   }
 };
 
-void testVectorAddKernel(Host host, Device device) {
+void testVectorAddKernel(Host host, Platform platform, Device device) {
   // random number generator with a gaussian distribution
   std::random_device rd{};
   std::default_random_engine rand{rd()};
-  std::normal_distribution<float> dist{0., 1.};
+  std::normal_distribution<float> dist{0.f, 1.f};
 
   // tolerance
-  constexpr float epsilon = 0.000001;
+  constexpr float epsilon = 0.000001f;
 
   // buffer size
   constexpr size_t size = 1024 * 1024;
 
   // allocate input and output host buffers in pinned memory accessible by the Platform devices
-  auto in1_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
-  auto in2_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
-  auto out_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
+  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
 
   // fill the input buffers with random data, and the output buffer with zeros
   for (size_t i = 0; i < size; ++i) {
@@ -136,7 +136,7 @@ void testVectorAddKernel(Host host, Device device) {
   std::cout << "success\n";
 }
 
-void testVectorAddKernel3D(Host host, Device device) {
+void testVectorAddKernel3D(Host host, Platform platform, Device device) {
   // random number generator with a gaussian distribution
   std::random_device rd{};
   std::default_random_engine rand{rd()};
@@ -150,9 +150,9 @@ void testVectorAddKernel3D(Host host, Device device) {
   constexpr size_t size = ndsize.prod();
 
   // allocate input and output host buffers in pinned memory accessible by the Platform devices
-  auto in1_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
-  auto in2_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
-  auto out_h = alpaka::allocMappedBuf<Platform, float, uint32_t>(host, Vec1D{size});
+  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
 
   // fill the input buffers with random data, and the output buffer with zeros
   for (size_t i = 0; i < size; ++i) {
@@ -201,20 +201,24 @@ void testVectorAddKernel3D(Host host, Device device) {
 }
 
 int main() {
+  // initialise the accelerator platform
+  Platform platform;
+
   // require at least one device
-  std::size_t n = alpaka::getDevCount<Platform>();
+  std::size_t n = alpaka::getDevCount(platform);
   if (n == 0) {
     exit(EXIT_FAILURE);
   }
 
   // use the single host device
-  Host host = alpaka::getDevByIdx<HostPlatform>(0u);
+  HostPlatform host_platform;
+  Host host = alpaka::getDevByIdx(host_platform, 0u);
   std::cout << "Host:   " << alpaka::getName(host) << '\n';
 
   // use the first device
-  Device device = alpaka::getDevByIdx<Platform>(0u);
+  Device device = alpaka::getDevByIdx(platform, 0u);
   std::cout << "Device: " << alpaka::getName(device) << '\n';
 
-  testVectorAddKernel(host, device);
-  testVectorAddKernel3D(host, device);
+  testVectorAddKernel(host, platform, device);
+  testVectorAddKernel3D(host, platform, device);
 }
