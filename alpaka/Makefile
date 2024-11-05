@@ -10,19 +10,16 @@ clean:
 # NVIDIA CUDA
 CUDA_BASE   ?= /usr/local/cuda
 
-# Boost C++ library
-BOOST_BASE  ?= /usr
-
 # Intel TBB library
 TBB_BASE    ?= /usr
 
 # Alpaka library
-ALPAKA_BASE ?= /home/fwyzard/src/alpaka-group/alpaka
+ALPAKA_BASE ?= /afs/hep.wisc.edu/home/abocci/public/alpaka
 
 CXX  := g++
 NVCC := $(CUDA_BASE)/bin/nvcc
 
-CXXFLAGS       := -std=c++17 -O2 -g -I$(BOOST_BASE)/include -I$(ALPAKA_BASE)/include
+CXXFLAGS       := -std=c++17 -O2 -g -I$(ALPAKA_BASE)/include
 CXX_HOST_FLAGS := -pthread
 CXX_CUDA_FLAGS := --expt-relaxed-constexpr
 
