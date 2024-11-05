@@ -12,7 +12,7 @@
 #include "config.h"
 
 int main() {
-  // the host abstraction always has a single device
+  // the host platform always has a single device
   HostPlatform host_platform;
   Host host = alpaka::getDevByIdx(host_platform, 0u);
 
