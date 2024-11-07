@@ -10,7 +10,7 @@
 #include <alpaka/alpaka.hpp>
 
 #include "config.h"
-#include "workdivision.h"
+#include "WorkDiv.hpp"
 
 struct VectorAddKernel {
   template <typename TAcc, typename T>
@@ -19,7 +19,7 @@ struct VectorAddKernel {
                                 T const* __restrict__ in2,
                                 T* __restrict__ out,
                                 uint32_t size) const {
-    for (auto index : elements_with_stride(acc, size)) {
+    for (auto index : alpaka::uniformElements(acc, size)) {
       out[index] = in1[index] + in2[index];
     }
   }
@@ -32,7 +32,7 @@ struct VectorAddKernel1D {
                                 T const* __restrict__ in2,
                                 T* __restrict__ out,
                                 Vec1D size) const {
-    for (auto ndindex : elements_with_stride_nd(acc, size)) {
+    for (auto ndindex : alpaka::uniformElementsND(acc, size)) {
       auto index = ndindex[0];
       out[index] = in1[index] + in2[index];
     }
@@ -46,7 +46,7 @@ struct VectorAddKernel3D {
                                 T const* __restrict__ in2,
                                 T* __restrict__ out,
                                 Vec3D size) const {
-    for (auto ndindex : elements_with_stride_nd(acc, size)) {
+    for (auto ndindex : alpaka::uniformElementsND(acc, size)) {
       auto index = (ndindex[0] * size[1] + ndindex[1]) * size[2] + ndindex[2];
       out[index] = in1[index] + in2[index];
     }
@@ -93,7 +93,7 @@ void testVectorAddKernel(Host host, Platform platform, Device device) {
   alpaka::memset(queue, out_d, 0x00);
 
   // launch the 1-dimensional kernel with scalar size
-  auto div = make_workdiv<Acc1D>(32, 32);
+  auto div = makeWorkDiv<Acc1D>(32, 32);
   std::cout << "Testing VectorAddKernel with scalar indices with a grid of "
             << alpaka::getWorkDiv<alpaka::Grid, alpaka::Blocks>(div) << " blocks x "
             << alpaka::getWorkDiv<alpaka::Block, alpaka::Threads>(div) << " threads x "
@@ -182,7 +182,7 @@ void testVectorAddKernel3D(Host host, Platform platform, Device device) {
   alpaka::memset(queue, out_d, 0x00);
 
   // launch the 3-dimensional kernel
-  auto div = make_workdiv<Acc3D>({5, 5, 1}, {4, 4, 4});
+  auto div = makeWorkDiv<Acc3D>({5, 5, 1}, {4, 4, 4});
   std::cout << "Testing VectorAddKernel3D with vector indices with a grid of "
             << alpaka::getWorkDiv<alpaka::Grid, alpaka::Blocks>(div) << " blocks x "
             << alpaka::getWorkDiv<alpaka::Block, alpaka::Threads>(div) << " threads x "
