@@ -2,3 +2,4 @@
 *_cuda
 *_mt
 *_tbb
+*_hip

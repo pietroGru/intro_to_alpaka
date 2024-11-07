@@ -10,6 +10,9 @@ clean:
 # NVIDIA CUDA
 CUDA_BASE   ?= /usr/local/cuda
 
+# ROCM_BASE
+ROCM_BASE   ?= /opt/rocm
+
 # Intel TBB library
 TBB_BASE    ?= /usr
 
@@ -18,6 +21,7 @@ ALPAKA_BASE ?= /afs/hep.wisc.edu/home/abocci/public/alpaka
 
 CXX  := g++
 NVCC := $(CUDA_BASE)/bin/nvcc
+HIPCC := $(ROCM_BASE)/bin/hipcc
 
 CXXFLAGS       := -std=c++17 -O2 -g -I$(ALPAKA_BASE)/include
 CXX_HOST_FLAGS := -pthread
@@ -34,4 +38,7 @@ CXX_CUDA_FLAGS := --expt-relaxed-constexpr
 
 %_cuda: %.cc
 	$(NVCC) -x cu -ccbin $(CXX) $(CXXFLAGS) $(CXX_CUDA_FLAGS) -Xcompiler '$(CXX_HOST_FLAGS)' -DALPAKA_ACC_GPU_CUDA_ENABLED $< -o $@
+
+%_hip: %.cc
+	$(HIPCC) $(CXXFLAGS) -DALPAKA_ACC_GPU_HIP_ENABLED $< -o $@
 
