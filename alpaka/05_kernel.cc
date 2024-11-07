@@ -18,7 +18,7 @@ struct VectorAddKernel {
                                 T const* __restrict__ in1,
                                 T const* __restrict__ in2,
                                 T* __restrict__ out,
-                                size_t size) const {
+                                uint32_t size) const {
     for (auto index : elements_with_stride(acc, size)) {
       out[index] = in1[index] + in2[index];
     }
@@ -63,15 +63,15 @@ void testVectorAddKernel(Host host, Platform platform, Device device) {
   constexpr float epsilon = 0.000001f;
 
   // buffer size
-  constexpr size_t size = 1024 * 1024;
+  constexpr uint32_t size = 1024 * 1024;
 
   // allocate input and output host buffers in pinned memory accessible by the Platform devices
-  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
-  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
-  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
+  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
+  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
 
   // fill the input buffers with random data, and the output buffer with zeros
-  for (size_t i = 0; i < size; ++i) {
+  for (uint32_t i = 0; i < size; ++i) {
     in1_h[i] = dist(rand);
     in2_h[i] = dist(rand);
     out_h[i] = 0.;
@@ -81,9 +81,9 @@ void testVectorAddKernel(Host host, Platform platform, Device device) {
   auto queue = Queue{device};
 
   // allocate input and output buffers on the device
-  auto in1_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
-  auto in2_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
-  auto out_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
+  auto in1_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
+  auto in2_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
+  auto out_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
 
   // copy the input data to the device; the size is known from the buffer objects
   alpaka::memcpy(queue, in1_d, in1_h);
@@ -108,7 +108,7 @@ void testVectorAddKernel(Host host, Platform platform, Device device) {
   alpaka::wait(queue);
 
   // check the results
-  for (size_t i = 0; i < size; ++i) {
+  for (uint32_t i = 0; i < size; ++i) {
     float sum = in1_h[i] + in2_h[i];
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
@@ -133,7 +133,7 @@ void testVectorAddKernel(Host host, Platform platform, Device device) {
   alpaka::wait(queue);
 
   // check the results
-  for (size_t i = 0; i < size; ++i) {
+  for (uint32_t i = 0; i < size; ++i) {
     float sum = in1_h[i] + in2_h[i];
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
@@ -152,15 +152,15 @@ void testVectorAddKernel3D(Host host, Platform platform, Device device) {
 
   // 3-dimensional and linearised buffer size
   constexpr Vec3D ndsize = {50, 125, 16};
-  constexpr size_t size = ndsize.prod();
+  constexpr uint32_t size = ndsize.prod();
 
   // allocate input and output host buffers in pinned memory accessible by the Platform devices
-  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
-  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
-  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto in1_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
+  auto in2_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
+  auto out_h = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
 
   // fill the input buffers with random data, and the output buffer with zeros
-  for (size_t i = 0; i < size; ++i) {
+  for (uint32_t i = 0; i < size; ++i) {
     in1_h[i] = dist(rand);
     in2_h[i] = dist(rand);
     out_h[i] = 0.;
@@ -170,9 +170,9 @@ void testVectorAddKernel3D(Host host, Platform platform, Device device) {
   auto queue = Queue{device};
 
   // allocate input and output buffers on the device
-  auto in1_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
-  auto in2_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
-  auto out_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
+  auto in1_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
+  auto in2_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
+  auto out_d = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
 
   // copy the input data to the device; the size is known from the buffer objects
   alpaka::memcpy(queue, in1_d, in1_h);
@@ -197,7 +197,7 @@ void testVectorAddKernel3D(Host host, Platform platform, Device device) {
   alpaka::wait(queue);
 
   // check the results
-  for (size_t i = 0; i < size; ++i) {
+  for (uint32_t i = 0; i < size; ++i) {
     float sum = in1_h[i] + in2_h[i];
     assert(out_h[i] < sum + epsilon);
     assert(out_h[i] > sum - epsilon);
@@ -210,7 +210,7 @@ int main() {
   Platform platform;
 
   // require at least one device
-  std::size_t n = alpaka::getDevCount(platform);
+  std::uint32_t n = alpaka::getDevCount(platform);
   if (n == 0) {
     exit(EXIT_FAILURE);
   }

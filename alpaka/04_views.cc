@@ -45,7 +45,7 @@ int main() {
 
   {
     // allocate a buffer of floats in global device memory, asynchronously
-    auto device_buffer = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
+    auto device_buffer = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
     std::cout << "memory buffer on " << alpaka::getName(alpaka::getDev(device_buffer))
               << " at " << std::data(device_buffer) << "\n\n";
 

@@ -28,7 +28,7 @@ int main() {
 
   // allocate a buffer of floats in host memory, mapped to be efficiently copied to/from the device
   uint32_t size = 42;
-  auto host_buffer = alpaka::allocMappedBuf<float, uint32_t>(host, platform, Vec1D{size});
+  auto host_buffer = alpaka::allocMappedBuf<float, uint32_t>(host, platform, size);
   std::cout << "pinned host memory buffer at " << std::data(host_buffer) << "\n\n";
 
   // fill the host buffers with values
@@ -45,7 +45,7 @@ int main() {
 
   {
     // allocate a buffer of floats in global device memory, asynchronously
-    auto device_buffer = alpaka::allocAsyncBuf<float, uint32_t>(queue, Vec1D{size});
+    auto device_buffer = alpaka::allocAsyncBuf<float, uint32_t>(queue, size);
     std::cout << "memory buffer on " << alpaka::getName(alpaka::getDev(device_buffer))
               << " at " << std::data(device_buffer) << "\n\n";
 
