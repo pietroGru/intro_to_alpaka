@@ -4,7 +4,8 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/**",
-                "/afs/cern.ch/user/p/pgrutta/private/alpaka/install/**"
+                "/afs/cern.ch/user/p/pgrutta/private/alpaka/install/**",
+                "/usr/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
