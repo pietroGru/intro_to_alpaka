@@ -17,6 +17,7 @@ int main() {
 
   // require at least one device
   std::size_t n = alpaka::getDevCount(platform);
+  std::cout << "Found " << n << " devices\n";
   if (n == 0) {
     exit(EXIT_FAILURE);
   }
